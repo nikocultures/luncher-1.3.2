@@ -1,0 +1,17 @@
+{
+  "maps": 118,
+  "profiles": 590,
+  "factions": 5,
+  "formats": {
+    "symbolic": 94,
+    "numeric": 11,
+    "compiled": 13
+  },
+  "mixedAssignmentsAndReactivation": true,
+  "byteExactRestore": true,
+  "externalUpdateBlockedWithoutWrites": true,
+  "malformedCifRejected": true,
+  "liveFilesUnchanged": true,
+  "liveFilesHashed": 745,
+  "ok": true
+}

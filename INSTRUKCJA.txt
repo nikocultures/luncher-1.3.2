@@ -1,0 +1,47 @@
+CnMod Launcher — wersja dla CnMod 1.3.2
+
+URUCHOMIENIE
+1. Rozpakuj cały ZIP do osobnego folderu.
+2. Uruchom CnModLauncher.exe albo Uruchom-CnMod-Launcher.bat.
+3. Wybierz mapę, ustaw nacje graczy i rozdzielczość.
+4. Kliknij „Zapisz ustawienia mapy” albo „Zapisz i uruchom grę”.
+5. W menu gry wybierz mapę o tej samej nazwie.
+
+Launcher jest ustawiony na folder „CnMod 1.3.2” na Twoim pulpicie.
+Obsługiwana nazwa gry: Culturesnation Mod.v1.3.2.schoolfix.exe.
+Jeżeli przeniesiesz grę, wpisz pełną ścieżkę jej folderu do pliku
+CnModLauncher.game-path.txt. Wpis %DESKTOP% oznacza rzeczywisty pulpit
+Windows, również gdy znajduje się w OneDrive.
+
+Zachowaj razem pliki EXE, DLL i MapFactionTool.py.
+Potrzebny jest .NET Framework 4.x i Python 3.10 lub nowszy.
+Na Twoim komputerze launcher wykrył Python 3.12.
+
+ZACHOWANE FUNKCJE
+Wybór i wyszukiwanie map, kategorie singleplayer/multiplayer/kampanie,
+osobne nacje graczy ludzkich i AI, przyciski ustawiania jednej nacji
+wszystkim graczom, rozdzielczości, tryb okienkowy/pełnoekranowy,
+zapis bez uruchamiania, uruchomienie gry i przywracanie map.
+Wygląd, układ elementów i osadzona grafika pochodzą z oryginalnego EXE.
+
+KOPIE MAP
+Pierwszy zapis tworzy bazę dla wersji 1.3.2 w folderze gry:
+CnModLauncherData/map-backups/1.3.2/<identyfikator>/original
+Kolejne zmiany frakcji powstają z tej bazy, a nie z poprzedniej przeróbki.
+„Przywróć oryginalną mapę” odtwarza pliki bajt po bajcie.
+Kopie Game.ini znajdują się w CnModLauncherData/graphics/1.3.2/original.
+
+Jeżeli pliki mapy zmienią się poza launcherem, np. po aktualizacji gry,
+launcher zatrzyma zapis i przywracanie. Zapobiega to nadpisaniu nowych
+plików starą kopią. Aby przyjąć nową bazę, zamknij grę i launcher,
+zachowaj odpowiedni folder kopii mapy i przenieś go poza map-backups/1.3.2.
+Po ponownym zapisie launcher utworzy bazę z aktualnych plików.
+Nie przenoś ani nie usuwaj kopii w trakcie działania launchera.
+
+OGRANICZENIA
+Launcher nie pobiera aktualizacji gry. Korzysta z lokalnych plików.
+Zmiana frakcji nie przebudowuje całej logiki kampanii. Rozpoznane komendy
+jednostek/budynków, w tym część komend result w skryptach misji, są zmieniane;
+inne odwołania do kultur mogą pozostać zgodne z oryginalnym scenariuszem.
+Nie zmienia terenu ani plików map.dat.
+Testy obejmują parser i launcher; pełna rozgrywka wymaga sprawdzenia w grze.

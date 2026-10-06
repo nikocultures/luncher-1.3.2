@@ -1,0 +1,121 @@
+Analiza luncher.zip i migracja do CnMod 1.3.2
+Data: 6 października 2026
+
+WYNIK
+Przygotowano launcher dla lokalnej instalacji na pulpicie:
+C:\Users\niko2\OneDrive\Pulpit\CnMod 1.3.2
+Plik gry: Culturesnation Mod.v1.3.2.schoolfix.exe.
+Oryginalny luncher.zip pozostaje niezmieniony. Prace wykonano na kopii.
+
+TECHNOLOGIA I STRUKTURA
+Oryginalny ZIP zawiera cztery pliki w folderze luncher:
+- CnModLauncher.exe: aplikacja zarządzana Windows Forms, CLR v4.0.30319;
+  odwołania do .NET Framework 4.x, System.Windows.Forms, System.Drawing,
+  System.Web.Extensions, System.Core i System. Namespace CnModNativeLauncher.
+- MapFactionTool.py: parser i edytor map, używa wyłącznie biblioteki
+  standardowej Pythona. Jego składnia wymaga Python 3.10 lub nowszego.
+- README.md: dokumentacja wariantu dla CnMod 1.3.1.
+- Uruchom-CnMod-Launcher.bat: uruchamia EXE z własnego katalogu.
+
+Nie ma projektu .csproj/.sln ani źródeł interfejsu C#. Pakiet jest dystrybucją
+programu. EXE zawiera osadzoną grafikę CnModLauncher.Background.png oraz ikonę.
+Wnioski dotyczące interfejsu i uruchamiania potwierdzono analizą metadanych
+i instrukcji IL; źródło parsera Python jest dostępne bezpośrednio.
+
+MECHANIZM URUCHAMIANIA I AKTUALIZACJI
+Stary EXE szukał instalacji kolejno w runtime/CnMod 1.3.1, runtime oraz
+w zaszytej ścieżce C:\Users\niko2\Downloads\CnMod 1.3.1. Wymagał folderu
+CnModMaps oraz dokładnego pliku Culturesnation Mod.exe. Nie szukał zwyczajnie
+na pulpicie. Stara ścieżka Downloads nie istnieje na tym komputerze.
+
+Lista map pochodzi z wywołania MapFactionTool.py list --root <folder>.
+Zmiana frakcji używa activate z --map i --assignments-b64. Przydział slotów
+jest przekazywany jako JSON w Base64. Parser zwraca JSON przez stdout,
+a launcher odczytuje rezultat przez JavaScriptSerializer. Proces Pythona
+działa w tle bez konsoli. Przywracanie korzysta z komendy restore.
+
+Przycisk zapisu najpierw zmienia mapę, potem zapisuje Game.ini. Przycisk
+uruchomienia dodatkowo uruchamia EXE gry z katalogiem roboczym gry.
+Wybrana mapa nie jest przekazywana jako argument startowy: użytkownik
+wybiera ją w menu gry. Blokada zapisów sprawdza nazwę procesu gry.
+
+Nie znaleziono funkcji pobierania, manifestu zdalnych aktualizacji ani
+automatycznej wymiany plików gry. „Aktualizacja launchera” oznacza tu
+dostosowanie ścieżek, pliku EXE, parsera i kopii do lokalnej wersji gry.
+
+ZALEŻNOŚCI OD WERSJI
+Nazwy folderu, EXE i procesu były zaszyte dla 1.3.1. Pozostałe zależności to:
+- katalog CnModMaps, mapa będąca jego bezpośrednim podfolderem i map.dat;
+- konfiguracje .inc/.ini oraz map.cif z nagłówkiem typu 1021/znacznikiem 1001;
+- definicje graczy HUMAN/AI lub liczbowe 1/2 i sekcja playerdata;
+- pięć kultur: VIKING=1, FRANK=2, BYZANTINE=3, SARACEN=4, EGYPT=7;
+- rozpoznane sethuman, sethumanx, setvehicle, sethouse i odpowiedniki result;
+- klucze gfx_screen_width, gfx_screen_height, gfx_screen_depth, gfx_fullscreen.
+
+W 1.3.2 rozpoznano 118 map: 94 symboliczne, 11 liczbowe i 13 CIF.
+Kategorie: 23 singleplayer, 44 multiplayer, 51 kampanii/podmap.
+Pięć folderów z końcówkami _vik/_fra/_byz/_sar/_egy jest pomijanych tak jak
+w oryginale. Frakcje specjalne/neutralne pozostają oznaczone w interfejsie.
+Game.ini ma ustawienie języka polskiego set_language 6 i trybu okienkowego;
+launcher może dopisać brakujące wymiary i głębię koloru.
+Nie było dostępnej instalacji 1.3.1, więc nie wykonano porównania kompletnych
+plików dwóch wersji gry. Porównano założenia starego launchera z plikami 1.3.2.
+
+PLAN MIGRACJI I WYKONANIE
+1. Zabezpieczyć ZIP, odczytać EXE i parser — wykonano.
+2. Ustalić plik gry i zgodność map 1.3.2 — wykonano na lokalnych plikach.
+3. Zachować interfejs, podmienić wykrywanie folderu, EXE i blokadę procesu
+   — wykonano poprzez zmianę IL istniejącego EXE i małą bibliotekę Runtime.
+   Konfiguracja ścieżki jest w CnModLauncher.game-path.txt. Obsługuje %DESKTOP%,
+   ścieżki względne i zmienne środowiskowe; błędny jawny wpis zgłasza błąd.
+4. Sprawdzić Python >=3.10 i poprawić odkrywanie lokalnych instalacji
+   3.10–3.14 oraz python.exe z PATH — wykonano; wykryto lokalny Python 3.12.
+5. Oddzielić kopie 1.3.2 od 1.3.1 i chronić zmienione mapy — wykonano.
+   Manifest v3 zapisuje wersję gry, SHA-256 map.dat, oryginałów i bieżących
+   konfiguracji. Obce zmiany blokują zapis i przywracanie. Wszystkie pliki
+   są przygotowywane przed zapisem; błąd zapisu uruchamia próbę cofnięcia.
+   Przy nagłym przerwaniu procesu nie ma pełnej transakcji systemowej;
+   rozbieżność zostanie wykryta przy następnej operacji.
+6. Sprawdzić zakresy indeksów CIF i odrzucać nieprawidłowe archiwa — wykonano.
+7. Zweryfikować interfejs, przypisania, przywracanie i grafikę na kopiach
+   — wyniki końcowe zawiera plik Wyniki-testow.json w paczce.
+8. Test rozgrywki: uruchomić wybraną mapę tekstową i CIF, sprawdzić nacje,
+   startowe obiekty, cele kampanii i działanie Alt+Tab. Ten etap wymaga gry.
+
+WYNIKI TESTÓW
+590 wariantów frakcji na 118 mapach przeszło aktywację i przywracanie.
+Przywrócone konfiguracje mają identyczne SHA-256 jak przed zmianą.
+Na każdej mapie sprawdzono także mieszane przydziały i ponowną aktywację.
+Zewnętrzna zmiana mapy blokuje aktywację i przywracanie bez nadpisywania.
+Nieprawidłowy indeks CIF jest odrzucany kontrolowanym błędem ValueError.
+745 plików źródłowych map porównano przed i po testach; pozostają bez zmian.
+Zmodyfikowany formularz uruchomiono w teście, załadował 118 map z pulpitu.
+Zapis 1920x1080, 16 bitów i trybu okienkowego potwierdzono na kopii Game.ini.
+Metody budowania interfejsu i osadzona grafika są identyczne z oryginałem.
+Podgląd formularza zapisano jako Podglad-launchera-1.3.2.png.
+
+POTWIERDZONE PROBLEMY ORYGINAŁU
+Stary parser przed każdą aktywacją bezwarunkowo przywracał dawną bazę.
+Test wykazał, że mapa podmieniona po aktualizacji była nadpisywana starszą
+wersją. Kopie były identyfikowane jedynie nazwą mapy, bez wersji gry.
+Nieprawidłowa długość indeksu CIF mogła powodować IndexError, nieobjęty
+obsługą błędów inspect_map. Oba przypadki poprawiono w wydanej kopii.
+README twierdziło także, że kopia Game.ini ma SHA-256; analizowana metoda
+EXE zapisywała ścieżki i datę, bez takiej sumy. Nowa instrukcja opisuje
+rzeczywiste zachowanie kopii grafiki.
+
+ZAKRES I OGRANICZENIA
+Podmieniono istniejący program, zachowując metody budujące interfejs oraz
+osadzoną grafikę. Nie odtworzono pełnego źródłowego projektu Windows Forms.
+Źródła nowych elementów i programu wykonującego podmianę są w folderze
+Zrodla. Narzędziem do zmiany IL był Mono.Cecil 0.11.6:
+https://www.mono-project.com/docs/tools+libraries/libraries/Mono.Cecil/
+Jest to zależność narzędzia budowania; launcher jej nie wymaga.
+
+Parser zmienia także rozpoznane komendy result w skryptach misji, mimo
+uproszczonego opisu w dawnym README. Nie przebudowuje całych scenariuszy;
+odwołania do kultury spoza obsługiwanych komend mogą pozostać oryginalne.
+Testy plików nie gwarantują działania każdego celu kampanii w rozgrywce.
+
+SHA-256 oryginalnego ZIP-a, zgodny z kopią roboczą:
+444E58F58B99D5AB2690C743CC23DB523A2EEF30721B7194E5A702C779D5AFC3
